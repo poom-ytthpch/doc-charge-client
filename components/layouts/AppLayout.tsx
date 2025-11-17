@@ -3,7 +3,8 @@
 import { Layout } from "antd";
 import Sidebar from "./Sidebar";
 import HeaderBar from "./HeaderBar";
-import ApolloWrapper from "@/app/common/apollo/wrapper";
+import ApolloWrapper from "@/common/apollo/wrapper";
+import Providers from "@/common/providers";
 
 const { Content, Footer } = Layout;
 
@@ -17,7 +18,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <HeaderBar />
 
           <Content className="m-4 p-6 bg-white rounded-2xl shadow-sm min-h-[calc(100vh-120px)]">
-            {children}
+            <Providers>{children}</Providers>
           </Content>
 
           <Footer className="text-center text-gray-500 py-4">

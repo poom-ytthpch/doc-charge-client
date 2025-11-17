@@ -5,8 +5,8 @@ import {
   HomeOutlined,
   ThunderboltOutlined,
   WalletOutlined,
-  SettingOutlined,
   UserAddOutlined,
+  LoginOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 
@@ -45,6 +45,11 @@ const MenuList = () => {
           key: "register",
           icon: <UserAddOutlined />,
           label: "Register",
+        },
+        {
+          key: "login",
+          icon: <LoginOutlined />,
+          label: "Login",
         },
       ]}
     />

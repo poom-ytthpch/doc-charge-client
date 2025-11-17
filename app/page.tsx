@@ -1,5 +1,4 @@
-import AppLayout from "./components/layouts/AppLayout";
-import Register from "./components/register";
+import AppLayout from "../components/layouts/AppLayout";
 
 export default function Home() {
   return (

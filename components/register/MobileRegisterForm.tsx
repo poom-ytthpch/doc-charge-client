@@ -1,16 +1,23 @@
 import { Button, Form, Input, Space } from "antd";
 import { useState } from "react";
-import OTPInput from "react-otp-input";
 import CustomOTPInput from "./OtpInput";
-import OtpCountdown from "@/app/common/OtpCountDown";
 import { useMutation } from "@apollo/client/react";
-import { SendOTPMutation } from "@/app/gql/auth";
+import { SendOTPMutation } from "@/gql/auth";
+import OtpCountdown from "@/common/OtpCountDown";
+import { useDispatch } from "react-redux";
+import { login } from "@/store/slices/authSlice";
+import { useAppDispatch } from "@/store/store";
 
 type FieldType = {
   mobile: string;
+  pin: string;
 };
 
-const MobileRegisterForm = () => {
+type Props = {
+  isLogin?: boolean;
+};
+
+const MobileRegisterForm = ({ isLogin }: Props) => {
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isActive, setIsActive] = useState(true);
@@ -18,12 +25,24 @@ const MobileRegisterForm = () => {
   const [mobile, setMobile] = useState("");
   const [otpChecked, setOtpChecked] = useState(false);
   const [otpRefID, setOtpRefID] = useState("");
+  const dispatch = useAppDispatch();
 
-  const onFinish = (values: FieldType) => {
+  const handleLogin = ({ mobile, pin }: FieldType) => {
+    dispatch(login({ mobile, pin }));
+  };
+
+  const onFinish = async (values: FieldType) => {
     console.log("Success:", values);
     setMobile(values.mobile);
-    setIsOtpSent(true);
-    sendOTP({ variables: { input: { mobile: mobile, purpose: "REGISTER" } } });
+    if (!isLogin) {
+      setIsOtpSent(true);
+      sendOTP({
+        variables: { input: { mobile: mobile, purpose: "REGISTER" } },
+      });
+    }
+    const res = await handleLogin({ mobile: values.mobile, pin: values.pin });
+
+    console.log({ res });
   };
 
   const [sendOTP] = useMutation(SendOTPMutation, {
@@ -53,7 +72,7 @@ const MobileRegisterForm = () => {
           {isActive && <Button>Verify OTP</Button>}
         </>
       ) : (
-        <div className="w-full flex justify-center">
+        <div className="flex justify-center rounded-3xl p-20 shadow-lg backdrop-blur-md">
           <Form
             name="basic"
             // labelCol={{ span: 20 }}
@@ -82,8 +101,35 @@ const MobileRegisterForm = () => {
               <Input style={{ width: "150px" }} maxLength={10} minLength={10} />
             </Form.Item>
 
-            <Button type="primary" htmlType="submit">
-              Send OTP
+            {isLogin && (
+              <Form.Item<FieldType>
+                label="Pin"
+                name="pin"
+                layout="vertical"
+                rules={[
+                  { required: true, message: "Please fill pin!" },
+                  {
+                    len: 4,
+                    min: 4,
+                    max: 4,
+                    message: "Password must be 4 characters.",
+                  },
+                  {
+                    pattern: /^[0-9]+$/,
+                    message: "Password must contain only digits.",
+                  },
+                ]}
+              >
+                <Input.Password
+                  style={{ width: "150px" }}
+                  minLength={4}
+                  maxLength={4}
+                />
+              </Form.Item>
+            )}
+
+            <Button type="primary" htmlType="submit" className="w-full">
+              {isLogin ? "Login" : "Send OTP"}
             </Button>
           </Form>
         </div>
