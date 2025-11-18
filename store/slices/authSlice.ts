@@ -3,29 +3,49 @@ import client from "../../common/apollo/client";
 import Cookies from "js-cookie";
 import { LoginMutation } from "@/gql/auth";
 import { LoginRequest, LoginResponse, MutationLoginArgs } from "@/types/gql";
+import { showAlert } from "./alertSlice";
 
 export const login = createAsyncThunk(
   "auth/login",
   async ({ mobile, pin }: LoginRequest, thunkAPI) => {
     try {
-      const res = await client.mutate<LoginResponse, MutationLoginArgs>({
+      const res = await client.mutate<
+        { login: LoginResponse },
+        MutationLoginArgs
+      >({
         mutation: LoginMutation,
         variables: {
-          input: {
-            mobile,
-            pin,
-          },
+          input: { mobile, pin },
         },
       });
 
-      console.log({ res });
+      if (!res.data?.login.status) {
+        thunkAPI.dispatch(
+          showAlert({
+            type: "error",
+            message: res.data?.login.message || "Login failed",
+          })
+        );
 
-      if (!res.data?.status) {
-        thunkAPI.rejectWithValue(res.data?.message);
+        return thunkAPI.rejectWithValue(res.data?.login.message);
       }
+
+      thunkAPI.dispatch(
+        showAlert({
+          type: "success",
+          message: res.data?.login.message || "Login successful",
+        })
+      );
 
       return res;
     } catch (err: any) {
+      thunkAPI.dispatch(
+        showAlert({
+          type: "error",
+          message: err.message || "Something went wrong",
+        })
+      );
+
       return thunkAPI.rejectWithValue(err.message);
     }
   }
@@ -59,21 +79,25 @@ const authSlice = createSlice({
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, { payload }) => {
         state.loading = false;
-        if (payload.data?.token) {
-          state.token = payload.data?.token || null;
-          Cookies.set("token", payload.data?.token);
+
+        if (payload.data?.login?.token) {
+          state.token = payload.data.login.token;
+          Cookies.set("token", payload.data.login.token);
         }
       })
       .addCase(login.rejected, (state, { payload }) => {
         state.loading = false;
         state.error = payload as string;
+        state.token = null;
+        Cookies.remove("token");
       });
   },
 });
 
 export const { logout } = authSlice.actions;
-export default authSlice.reducer;
+
 export const authReducer = authSlice.reducer;

@@ -4,9 +4,8 @@ import CustomOTPInput from "./OtpInput";
 import { useMutation } from "@apollo/client/react";
 import { SendOTPMutation } from "@/gql/auth";
 import OtpCountdown from "@/common/OtpCountDown";
-import { useDispatch } from "react-redux";
 import { login } from "@/store/slices/authSlice";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch } from "@/store/hooks";
 
 type FieldType = {
   mobile: string;
@@ -72,7 +71,7 @@ const MobileRegisterForm = ({ isLogin }: Props) => {
           {isActive && <Button>Verify OTP</Button>}
         </>
       ) : (
-        <div className="flex justify-center rounded-3xl p-20 shadow-lg backdrop-blur-md">
+        <div className="flex justify-center rounded-3xl p-10 shadow-lg backdrop-blur-md ">
           <Form
             name="basic"
             // labelCol={{ span: 20 }}
