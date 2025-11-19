@@ -5,8 +5,9 @@ import Sidebar from "./Sidebar";
 import HeaderBar from "./HeaderBar";
 import ApolloWrapper from "@/common/apollo/wrapper";
 import Providers from "@/common/providers";
-import { Alert } from "antd";
 import GlobalAlert from "../alert/GlobalAlert";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor } from "@/store/store";
 
 const { Content, Footer } = Layout;
 
@@ -14,24 +15,26 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <ApolloWrapper>
       <Providers>
-        <Layout className="h-screen bg-gray-50">
-          <Sidebar />
+        <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+          <Layout className="h-screen bg-gray-50">
+            <Sidebar />
 
-          <Layout className="transition-all duration-300 ">
-            <HeaderBar />
-            <div className="p-2">
-              <GlobalAlert />
-            </div>
+            <Layout className="transition-all duration-300 ">
+              <HeaderBar />
+              <div className="p-2">
+                <GlobalAlert />
+              </div>
 
-            <Content className="m-4 p-6 bg-white rounded-2xl shadow-sm min-h-[calc(100vh-120px)]">
-              {children}
-            </Content>
+              <Content className="m-4 p-6 bg-white rounded-2xl shadow-sm min-h-[calc(100vh-120px)]">
+                {children}
+              </Content>
 
-            <Footer className="text-center text-gray-500 py-4">
-              {new Date().getFullYear()} DocCharge — EV Charging Platform
-            </Footer>
+              <Footer className="text-center text-gray-500 py-4">
+                {new Date().getFullYear()} DocCharge — EV Charging Platform
+              </Footer>
+            </Layout>
           </Layout>
-        </Layout>
+        </PersistGate>
       </Providers>
     </ApolloWrapper>
   );

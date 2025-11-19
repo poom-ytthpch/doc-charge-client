@@ -16,9 +16,7 @@ export default function HeaderBar() {
 
   return (
     <>
-      {/* Header Bar */}
       <div className="flex items-center justify-between bg-white px-6 py-2 shadow-sm sticky top-0 z-50 md:hidden">
-        {/* Left: Logo */}
         <div className="flex items-center gap-2">
           <Image
             src="/docchargelogo.png"
@@ -27,10 +25,8 @@ export default function HeaderBar() {
             height={100}
             className="rounded-full"
           />
-          {/* <span className="text-lg font-semibold text-gray-800">DocCharge</span> */}
         </div>
 
-        {/* Right: Hamburger menu */}
         <Button
           type="text"
           icon={<MenuOutlined className="text-2xl text-gray-700" />}
@@ -39,13 +35,7 @@ export default function HeaderBar() {
         />
       </div>
 
-      {/* Drawer Menu */}
-      <Drawer
-        title="Menu"
-        placement="right"
-        onClose={onClose}
-        open={open}
-      >
+      <Drawer title="Menu" placement="right" onClose={onClose} open={open}>
         <MenuList />
       </Drawer>
     </>

@@ -5,9 +5,11 @@ import { Button } from "antd";
 export default function OtpCountdown({
   sec = 60,
   setActive,
+  onResendOtp,
 }: {
   sec?: number;
   setActive?: (active: boolean) => void;
+  onResendOtp?: () => void;
 }) {
   const [seconds, setSeconds] = useState(sec);
   const [isActive, setIsActive] = useState(true);
@@ -31,6 +33,7 @@ export default function OtpCountdown({
   }, [isActive, seconds]);
 
   const startCountdown = () => {
+    onResendOtp && onResendOtp();
     setSeconds(sec);
     setIsActive(true);
   };

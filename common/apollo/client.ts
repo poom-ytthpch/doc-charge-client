@@ -3,17 +3,17 @@ import {
   InMemoryCache,
   HttpLink,
   ApolloLink,
-  split,
 } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
+import { setContext, SetContextLink } from "@apollo/client/link/context";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import * as cookies from "../actions";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 
-const url = String(process.env.NEXT_PUBLIC_BASE_URL)
-const isHttp = url.includes("http")
+const url = String(process.env.NEXT_PUBLIC_BASE_URL);
+const isHttp = url.includes("http");
 
 const token = async () => {
   return await cookies.get("accessToken");
@@ -21,48 +21,41 @@ const token = async () => {
 
 const httpLink = new HttpLink({
   uri: (operation) => {
-    return operation?.getContext()?.overrideApiUrl || url
+    return operation?.getContext()?.overrideApiUrl || url;
   },
-  credentials: 'same-origin',
-})
+  credentials: "same-origin",
+});
 
-const wsLink = new WebSocketLink(
-
-  new SubscriptionClient(url.replace(isHttp ? "http" : "https", isHttp ? "ws" : "wss"), {
-    reconnect: true,
-    timeout: 30000,
-    lazy: true,
-    connectionParams: async () => {
-      const accessToken = await token();
-      return {
-        authToken: accessToken ? `Bearer ${accessToken}` : "",
-      };
-    },
-
-  })
+const wsLink = new GraphQLWsLink(
+  new SubscriptionClient(
+    url.replace(isHttp ? "http" : "https", isHttp ? "ws" : "wss"),
+    {
+      reconnect: true,
+      timeout: 30000,
+      lazy: true,
+      connectionParams: async () => {
+        const accessToken = await token();
+        return {
+          authToken: accessToken ? `Bearer ${accessToken}` : "",
+        };
+      },
+    }
+  )
 );
 
-// ใช้ setContext เพื่อปรับ Context เช่น Authorization header
-const authLink = setContext((_, { headers }) => {
-  const token = async () => {
-    return await cookies.get("accessToken");
+const authLink = new SetContextLink(async (prevContext, operations) => {
+  const accessToken = await cookies.get("token");
+  return {
+    headers: {
+      ...prevContext.headers,
+      authorization: accessToken ? `Bearer ${accessToken}` : "",
+    },
   };
-
-  const context = token().then((accessToken) => {
-    return {
-      headers: {
-        ...headers,
-        authorization: accessToken ? `Bearer ${accessToken}` : "",
-      },
-    };
-  });
-
-  return context;
 });
 
 const httpAuthLink = ApolloLink.from([authLink, httpLink]);
 
-const link = split(
+const link = ApolloLink.split(
   ({ query }) => {
     const definition = getMainDefinition(query);
     return (
@@ -74,7 +67,6 @@ const link = split(
   httpAuthLink
 );
 
-// สร้าง ApolloClient
 const client = new ApolloClient({
   link,
   cache: new InMemoryCache(),

@@ -3,12 +3,14 @@ import OtpInput from "react-otp-input";
 type OTPInputProps = {
   value: string;
   onChange: (otp: string) => void;
+  refId: string;
 };
 
-const CustomOTPInput = ({ value, onChange }: OTPInputProps) => {
+const CustomOTPInput = ({ value, onChange, refId }: OTPInputProps) => {
   return (
     <>
-      <span className="text-2xl font-bold">Enter OTP</span>
+      <span className="text-2xl font-bold">Enter OTP </span>
+      <span className="text-sm"> (RefID: {refId}) </span>
       <OtpInput
         value={value}
         onChange={onChange}

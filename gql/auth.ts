@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const SendOTPMutation = gql`
-  mutation Mutation($input: SendOtpInput!) {
+  mutation SendOtp($input: SendOtpInput!) {
     sendOtp(input: $input) {
       expiredAt
       otp
@@ -22,6 +22,15 @@ export const LoginMutation = gql`
       status
       message
       token
+    }
+  }
+`;
+
+export const RegisterMutation = gql`
+  mutation MobileRegister($input: MobileRegisterRequest!) {
+    mobileRegister(input: $input) {
+      status
+      message
     }
   }
 `;
