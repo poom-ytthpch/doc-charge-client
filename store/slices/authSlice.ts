@@ -2,8 +2,16 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import client from "../../common/apollo/client";
 import Cookies from "js-cookie";
 import { LoginMutation } from "@/gql/auth";
-import { LoginRequest, LoginResponse, MutationLoginArgs } from "@/types/gql";
+import {
+  GetBalanceByMobileResponse,
+  GetBalanceByMobileResponseResolvers,
+  LoginRequest,
+  LoginResponse,
+  MutationLoginArgs,
+} from "@/types/gql";
 import { showAlert } from "./alertSlice";
+import { decode } from "jsonwebtoken";
+import { GetBalanceQuery } from "@/gql/wallet";
 
 export const login = createAsyncThunk(
   "auth/login",
@@ -37,7 +45,23 @@ export const login = createAsyncThunk(
         })
       );
 
-      return res;
+      const balance = await client.query<
+        { getBalance: GetBalanceByMobileResponse },
+        GetBalanceByMobileResponseResolvers
+      >({
+        query: GetBalanceQuery,
+        fetchPolicy: "no-cache",
+        context: {
+          headers: {
+            authorization: `Bearer ${res.data?.login.token}`,
+          },
+        },
+      });
+
+      if (balance.data?.getBalance.status === false) {
+        return thunkAPI.rejectWithValue(balance.data?.getBalance.message);
+      }
+      return { ...res, wallet: balance.data?.getBalance };
     } catch (err: any) {
       thunkAPI.dispatch(
         showAlert({
@@ -51,8 +75,30 @@ export const login = createAsyncThunk(
   }
 );
 
+interface Wallet {
+  balance: number;
+  currency: string;
+}
+
+interface User {
+  mobile: string;
+  wallet?: Wallet;
+  roles: string[];
+}
+
+interface TokenPayload {
+  userInfo: User;
+}
+
+interface DecodedToken {
+  payload: TokenPayload;
+  userInfo: User;
+  iat: number;
+  exp: number;
+}
+
 interface AuthState {
-  user: any;
+  user: User | null;
   token: string | null;
   loading: boolean;
   error: string | null;
@@ -84,7 +130,20 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, { payload }) => {
         state.loading = false;
 
+        console.log("Login Payload:", payload);
+
         if (payload.data?.login?.token) {
+          const decodedToken = decode(payload.data.login.token) as DecodedToken;
+
+          console.log("Decoded Token:", decodedToken);
+          state.user = {
+            mobile: decodedToken.payload.userInfo.mobile,
+            roles: decodedToken.payload.userInfo.roles,
+            wallet: {
+              balance: payload.wallet?.data?.balance || 0,
+              currency: payload.wallet?.data?.currency || "THB",
+            },
+          };
           state.token = payload.data.login.token;
           Cookies.set("token", payload.data.login.token);
         }

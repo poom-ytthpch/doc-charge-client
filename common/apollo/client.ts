@@ -43,12 +43,18 @@ const wsLink = new GraphQLWsLink(
   )
 );
 
-const authLink = new SetContextLink(async (prevContext, operations) => {
-  const accessToken = await cookies.get("token");
+const authLink = new SetContextLink(async (prevContext, _) => {
+  let accessToken = await cookies.get("token");
+
+  if (!accessToken || accessToken === "") {
+    accessToken =
+      prevContext.headers?.authorization?.replace("Bearer ", "") || null;
+  }
+
   return {
     headers: {
       ...prevContext.headers,
-      authorization: accessToken ? `Bearer ${accessToken}` : "",
+      authorization: accessToken ? `Bearer ${accessToken}` : ``,
     },
   };
 });

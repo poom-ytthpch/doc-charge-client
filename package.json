@@ -16,6 +16,7 @@
     "@reduxjs/toolkit": "^2.10.1",
     "antd": "^5.27.6",
     "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
     "next": "^16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
@@ -32,12 +33,14 @@
     "@graphql-codegen/typescript-resolvers": "5.1.2",
     "@tailwindcss/postcss": "^4",
     "@types/js-cookie": "^3.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
