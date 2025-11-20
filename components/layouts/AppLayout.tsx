@@ -23,7 +23,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <GlobalAlert />
         </div>
 
-        <Content className="m-4 p-6 bg-white rounded-2xl shadow-sm min-h-[calc(100vh-120px)]">
+        <Content className="m-4 p-6 bg-white rounded-2xl shadow-sm min-h-[calc(100vh-120px)] block overflow-auto">
           <ClientProviders>{children}</ClientProviders>
         </Content>
 

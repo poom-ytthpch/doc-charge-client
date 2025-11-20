@@ -16,7 +16,7 @@ export default function Sidebar() {
       width={256}
     >
       <div className="flex items-center gap-2 px-4 py-3 border-b">
-        <Image src="/docchargelogo.png" alt="logo" width={50} height={50} />
+        <Image src={`${process.env.NEXT_PUBLIC_BASE_PATH}/docchargelogo.png`} alt="logo" width={50} height={50} />
         <span className="text-lg font-bold text-primary">DocCharge</span>
       </div>
 

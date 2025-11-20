@@ -19,7 +19,7 @@ export default function HeaderBar() {
       <div className="flex items-center justify-between bg-white px-6 py-2 shadow-sm sticky top-0 z-50 md:hidden">
         <div className="flex items-center gap-2">
           <Image
-            src="/docchargelogo.png"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH}/docchargelogo.png`}
             alt="DocCharge Logo"
             width={100}
             height={100}
