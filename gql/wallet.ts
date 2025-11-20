@@ -18,3 +18,13 @@ export const GetBalanceQuery = gql`
     }
   }
 `;
+
+export const TopUpWalletMutation = gql`
+  mutation Topup($input: TopUpRequest!) {
+    topUp(input: $input) {
+      message
+      status
+      paymentId
+    }
+  }
+`;

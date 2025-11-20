@@ -31,9 +31,11 @@ const MenuList = () => {
     {
       key: "wallet",
       icon: <WalletOutlined />,
-      label: `Wallet (${auth.user?.wallet?.balance ?? 0} ${
-        auth.user?.wallet?.currency ?? ""
-      })`,
+      label: auth.user
+        ? `Wallet ( ${auth.user?.wallet?.balance.toFixed(2) ?? 0} ${
+            auth.user?.wallet?.currency ?? ""
+          })`
+        : "Wallet",
     },
     {
       key: "register",

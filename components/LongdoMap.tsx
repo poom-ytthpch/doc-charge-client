@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-
+import { get } from "lodash";
 export default function LongdoMap({ locations = [] }: any) {
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -20,8 +20,7 @@ export default function LongdoMap({ locations = [] }: any) {
     };
 
     const initMap = () => {
-      // @ts-ignore
-      const longdo = window.longdo;
+      const longdo = get(window, "longdo") as any;
       if (!longdo || !mapRef.current) return;
 
       const map = new longdo.Map({
@@ -30,7 +29,6 @@ export default function LongdoMap({ locations = [] }: any) {
         lastView: false,
       });
 
-      // สร้าง markers และเก็บ ref ถึง marker object
       const markerObjs: any[] = [];
 
       locations.forEach((loc: any) => {
@@ -40,7 +38,7 @@ export default function LongdoMap({ locations = [] }: any) {
             title: loc.name,
             clickable: true,
             icon: {
-              url: "charging-station.png",
+              url: `${process.env.NEXT_PUBLIC_BASE_PATH}/charging-station.png`,
               offset: { x: 3, y: -30 },
 
               size: { width: 36, height: 36 },
@@ -86,5 +84,10 @@ export default function LongdoMap({ locations = [] }: any) {
     loadScript();
   }, [locations]);
 
-  return <div ref={mapRef} className="w-full h-full max-h-[500px] rounded-lg overflow-hidden" />;
+  return (
+    <div
+      ref={mapRef}
+      className="w-full h-full max-h-[500px] rounded-lg overflow-hidden"
+    />
+  );
 }

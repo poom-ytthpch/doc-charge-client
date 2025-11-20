@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type AlertType = "success" | "info" | "warning" | "error";
+type AlertType = "success" | "info" | "warning" | "error" | "loading";
 
 interface AlertState {
   type: AlertType | null;

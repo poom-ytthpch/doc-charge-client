@@ -1,4 +1,3 @@
-import { GoogleMapsEmbed } from "@next/third-parties/google";
 import AppLayout from "../components/layouts/AppLayout";
 import LongdoMap from "@/components/LongdoMap";
 

@@ -1,5 +1,4 @@
 "use client";
-import { Input, Space } from "antd";
 import AppLayout from "../../components/layouts/AppLayout";
 import MobileRegisterForm from "../../components/register/MobileRegisterForm";
 

@@ -1,3 +1,4 @@
+import ClientProviders from "@/components/ClientProviders";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
@@ -12,11 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DOCCHARGE",
-  description: "DOCCHARGE Application",
+  title: "DocCharge EV | Register",
+  description: "DocCharge Application",
   icons: {
-    icon: "/docchargelogo.png",
-  }
+    icon: `${process.env.NEXT_PUBLIC_BASE_PATH}/docchargelogo.png`,
+  },
 };
 
 export default function RootLayout({
@@ -29,7 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );

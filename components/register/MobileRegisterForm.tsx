@@ -7,7 +7,6 @@ import {
   SendOTPMutation,
   VerifyOTPMutation,
 } from "@/gql/auth";
-import OtpCountdown from "@/common/OtpCountDown";
 import { login } from "@/store/slices/authSlice";
 import { useAppDispatch } from "@/store/hooks";
 import { useRouter } from "next/navigation";
@@ -18,6 +17,7 @@ import {
   MutationSendOtpArgs,
   SendOtpResponse,
 } from "@/types/gql";
+import OtpCountdown from "./OtpCountDown";
 
 type FieldType = {
   mobile: string;

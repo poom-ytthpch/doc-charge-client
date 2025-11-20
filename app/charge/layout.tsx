@@ -1,8 +1,6 @@
+import ClientProviders from "@/components/ClientProviders";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-
-import ClientProviders from "@/components/ClientProviders";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DocCharge EV | Charge Point",
+  title: "DocCharge",
   description: "DocCharge Application",
   icons: {
     icon: `${process.env.NEXT_PUBLIC_BASE_PATH}/docchargelogo.png`,

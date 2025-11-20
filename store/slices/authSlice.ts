@@ -17,6 +17,13 @@ export const login = createAsyncThunk(
   "auth/login",
   async ({ mobile, pin }: LoginRequest, thunkAPI) => {
     try {
+      thunkAPI.dispatch(
+        showAlert({
+          type: "loading",
+          message: "Logging ...",
+        })
+      );
+
       const res = await client.mutate<
         { login: LoginResponse },
         MutationLoginArgs
@@ -70,6 +77,28 @@ export const login = createAsyncThunk(
         })
       );
 
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const getBalanceByMobile = createAsyncThunk(
+  "auth/getBalanceByMobile",
+  async (_, thunkAPI) => {
+    try {
+      const balance = await client.query<
+        { getBalance: GetBalanceByMobileResponse },
+        GetBalanceByMobileResponseResolvers
+      >({
+        query: GetBalanceQuery,
+        fetchPolicy: "no-cache",
+      });
+
+      if (balance.data?.getBalance.status === false) {
+        return thunkAPI.rejectWithValue(balance.data?.getBalance.message);
+      }
+      return balance.data?.getBalance;
+    } catch (err: any) {
       return thunkAPI.rejectWithValue(err.message);
     }
   }
@@ -153,6 +182,23 @@ const authSlice = createSlice({
         state.error = payload as string;
         state.token = null;
         Cookies.remove("token");
+      })
+      .addCase(getBalanceByMobile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getBalanceByMobile.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        if (state.user && payload) {
+          state.user.wallet = {
+            balance: payload.data?.balance || 0,
+            currency: payload.data?.currency || "THB",
+          };
+        }
+      })
+      .addCase(getBalanceByMobile.rejected, (state, { payload }) => {
+        state.loading = false;
+        state.error = payload as string;
       });
   },
 });
